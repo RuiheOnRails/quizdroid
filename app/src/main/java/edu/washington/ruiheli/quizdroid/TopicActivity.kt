@@ -5,8 +5,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_topic.*
 
 class TopicActivity : AppCompatActivity() {
 
@@ -28,9 +26,6 @@ class TopicActivity : AppCompatActivity() {
         total.text = "Number of questions: " + numOfQuestions.toString()
 
         btnBegin.setOnClickListener({
-//            var toast = Toast.makeText(this,"begin pressed", Toast.LENGTH_SHORT)
-//            toast.setText("Begin pressed")
-//            toast.show()
             val i = Intent(this, Quiz::class.java)
             QuizSingleton.currentQuestionIndex = 0
             QuizSingleton.rightAnswerCount = 0

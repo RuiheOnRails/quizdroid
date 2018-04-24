@@ -3,12 +3,10 @@ package edu.washington.ruiheli.quizdroid
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
-import org.w3c.dom.Text
 
 class Quiz : AppCompatActivity() {
 
