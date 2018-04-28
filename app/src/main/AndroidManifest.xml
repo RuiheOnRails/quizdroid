@@ -18,7 +18,8 @@
         </activity>
         <activity android:name=".TopicActivity" />
         <activity android:name=".Quiz" />
-        <activity android:name=".Result"></activity>
+        <activity android:name=".Result" />
+        <activity android:name=".FragHolderActivity"></activity>
     </application>
 
 </manifest>

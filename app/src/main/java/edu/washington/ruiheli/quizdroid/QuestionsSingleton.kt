@@ -6,7 +6,7 @@ object QuizSingleton{
     var currentQuestionIndex: Int = 0
     var currentSelectedAnswer: Int = 0
     var rightAnswerCount: Int = 0
-
+    var preRightAnswerCount: Int = 0
     var topics: Array<String>? = null
 
     // topic to description

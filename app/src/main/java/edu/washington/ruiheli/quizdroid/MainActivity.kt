@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
             val rowText = row.findViewById<TextView>(R.id.row_topic)
             rowText.text = myTopics[position]
             row.setOnClickListener({
-                val i = Intent(myContext, TopicActivity::class.java)
+                val i = Intent(myContext, FragHolderActivity::class.java)
                 QuizSingleton.currentTopicIndex = position
                 myContext.startActivity(i)
             })
