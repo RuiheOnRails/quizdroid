@@ -14,44 +14,25 @@ import android.widget.TextView
 
 
 class MainActivity : AppCompatActivity() {
-    //
-    private val topics = arrayOf("Math", "Physics", "Marvel")
-    private val topicDescriptions = hashMapOf<String, String>("Math" to "Questions on basic math",
-            "Physics" to "Questions on basic physics",
-            "Marvel" to "Questions on Marvel Super Heros")
-    private val questions = hashMapOf<String, Array<String>>("Math" to arrayOf("1+1 = ?", "1+2 = ?"),
-            "Physics" to arrayOf("What's the 1kg/ m/s^2 in Newton unit?", "How many Gs is earth's gravity?"),
-            "Marvel" to arrayOf("What's iron man's first name?", "What's Dr.Strange's last name?"))
-    private val options = hashMapOf<String, Array<String>>("1+1 = ?" to arrayOf("1","2","3","4"),
-            "1+2 = ?" to arrayOf("1","2","3","4"),
-            "What's the 1kg/ m/s^2 in Newton unit?" to arrayOf("1","2","3","4"),
-            "How many Gs is earth's gravity?" to arrayOf("1","2","3","4"),
-            "What's iron man's first name?" to arrayOf("Tony", "Steven", "Bruce", "Strange"),
-            "What's Dr.Strange's last name?" to arrayOf("Tony", "Steven", "Bruce", "Strange"))
-    private val answers = hashMapOf<String, String>("1+1 = ?" to "2",
-            "1+2 = ?" to "3",
-            "What's the 1kg/ m/s^2 in Newton unit?" to "1",
-            "How many Gs is earth's gravity?" to "1",
-            "What's iron man's first name?" to "Tony",
-            "What's Dr.Strange's last name?" to "Strange")
+    private val localRepo = LocalTopicRepository()
+    private var quizApp  = QuizApp(localRepo)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        quizApp = QuizApp.instance
         setContentView(R.layout.activity_main)
-        QuizSingleton.topics = this.topics
-        QuizSingleton.topicDescription = this.topicDescriptions
-        QuizSingleton.topicQuestions = this.questions
-        QuizSingleton.options = this.options
-        QuizSingleton.answers = this.answers
         var listView = findViewById<ListView>(R.id.main_ListView)
-
-        listView.adapter = CustomeAdapter(this, topics)
+        quizApp.rightAnswerCount = 0
+        quizApp.currentTopicIndex = 0
+        quizApp.currentQuestionIndex = 0
+        quizApp.currentSelectedAnswer = 0
+        listView.adapter = CustomeAdapter(this, quizApp.getTopicRepo().getTopics())
     }
 
-    private class CustomeAdapter(context: Context, topics: Array<String>): BaseAdapter() {
+    private class CustomeAdapter(context: Context, topics: Array<Topic>): BaseAdapter() {
         private val myContext: Context = context
-        private val myTopics: Array<String> = topics
-
+        private val myTopics: Array<Topic> = topics
+        private val quizApp = QuizApp.instance
         override fun getCount(): Int {
             return myTopics.size
         }
@@ -67,13 +48,24 @@ class MainActivity : AppCompatActivity() {
             val layoutInflater = LayoutInflater.from(myContext)
             val row = layoutInflater.inflate(R.layout.row_main, parent, false)
             val rowText = row.findViewById<TextView>(R.id.row_topic)
-            rowText.text = myTopics[position]
+            val rowShortDescription = row.findViewById<TextView>(R.id.shortDesc_row)
+            rowText.text = myTopics[position].getTitle()
+            rowShortDescription.text = myTopics[position].getShortDesc()
             row.setOnClickListener({
                 val i = Intent(myContext, FragHolderActivity::class.java)
-                QuizSingleton.currentTopicIndex = position
+                quizApp.currentTopicIndex = position
                 myContext.startActivity(i)
             })
             return row
         }
     }
+
+    override fun onBackPressed() {
+        //exit to home
+        val i = Intent(Intent.ACTION_MAIN)
+        i.addCategory(Intent.CATEGORY_HOME)
+        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(i)
+    }
 }
+

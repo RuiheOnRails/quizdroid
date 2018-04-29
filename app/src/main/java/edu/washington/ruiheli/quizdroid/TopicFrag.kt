@@ -9,25 +9,27 @@ import android.widget.Button
 import android.widget.TextView
 
 class TopicFrag : Fragment() {
+    private val quizApp = QuizApp.instance
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val position = QuizSingleton.currentTopicIndex
+        val position = quizApp.currentTopicIndex
+        val currentTopic = quizApp.getTopicRepo().getTopics()[position]
         val topic = view.findViewById<TextView>(R.id.txtTitle_Topic)
         val desc = view.findViewById<TextView>(R.id.txtDesc_Topic)
         val total = view.findViewById<TextView>(R.id.txtTotalQuestion_Topic)
         val btnBegin = view.findViewById<Button>(R.id.btnBeing_Topic)
 
-        val topicStr = QuizSingleton.topics!![position]
-        val numOfQuestions = QuizSingleton.topicQuestions!![topicStr]!!.size
+        val topicStr = currentTopic.getTitle()
+        val numOfQuestions = currentTopic.getQuizzes().size
 
         topic.text = topicStr
-        desc.text = QuizSingleton.topicDescription!![topicStr]
-        total.text = "Number of questions: " + numOfQuestions.toString()
+        desc.text = currentTopic.getLongDesc()
+        total.text = String.format("Number of questions: %d", numOfQuestions )
 
         btnBegin.setOnClickListener({
-            QuizSingleton.currentQuestionIndex = 0
-            QuizSingleton.rightAnswerCount = 0
-            QuizSingleton.currentSelectedAnswer = 0
+            quizApp.currentQuestionIndex = 0
+            quizApp.rightAnswerCount = 0
+            quizApp.currentSelectedAnswer = 0
             val fragManager = activity!!.supportFragmentManager
             val transition = fragManager.beginTransaction()
             val nextFrag = QuizFrag()

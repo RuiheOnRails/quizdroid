@@ -1,10 +1,14 @@
 package edu.washington.ruiheli.quizdroid
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 
 class FragHolderActivity : AppCompatActivity() {
     val fragManager = supportFragmentManager
+    private val quizApp = QuizApp.instance
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_frag_holder)
@@ -21,7 +25,11 @@ class FragHolderActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        QuizSingleton.rightAnswerCount = QuizSingleton.preRightAnswerCount
+        quizApp.rightAnswerCount = 0
+        quizApp.currentTopicIndex = 0
+        quizApp.currentQuestionIndex = 0
+        quizApp.currentSelectedAnswer = 0
+        val i = Intent(this,MainActivity::class.java)
+        this.startActivity(i)
     }
 }

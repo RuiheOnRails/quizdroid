@@ -12,12 +12,21 @@ import android.widget.TextView
 
 
 class QuizFrag: Fragment(){
+    private val quizApp = QuizApp.instance
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
         super.onViewCreated(view, savedInstanceState)
         val btnSubmit = view.findViewById<Button>(R.id.btnSubmit_Quiz)
         btnSubmit.isEnabled = false
-        val position = QuizSingleton.currentTopicIndex
-        val currentQuestionIdx = QuizSingleton.currentQuestionIndex
+
+        val position = quizApp.currentTopicIndex
+        val currentQuestionIdx = quizApp.currentQuestionIndex
+        val currentTopic = quizApp.getTopicRepo().getTopics()[position]
+        val currentQuestions = currentTopic.getQuizzes()
+        val currentQuestion = currentQuestions[currentQuestionIdx]
+        val currentOption = currentQuestion.getOptions()
+
         val topic = view.findViewById<TextView>(R.id.txtTopic_Quiz)
         val progress = view.findViewById<TextView>(R.id.txtProgress_Quiz)
         val txtQuestion = view.findViewById<TextView>(R.id.txtQuestion_Quiz)
@@ -27,27 +36,24 @@ class QuizFrag: Fragment(){
         val rbOption3 = view.findViewById<RadioButton>(R.id.rbOption3_Quiz)
         val rbOption4 = view.findViewById<RadioButton>(R.id.rbOption4_Quiz)
 
-        val topicStr = QuizSingleton.topics!![position]
-
-        val questions = QuizSingleton.topicQuestions!![topicStr]!!
-        val options = QuizSingleton.options!![questions[currentQuestionIdx]]!!
+        val topicStr = currentTopic.getTitle()
 
         topic.text = topicStr
-        progress.text = String.format("%d / %d",currentQuestionIdx+1, questions.size)
-        txtQuestion.text = questions[currentQuestionIdx]
-        rbOption1.text = options[0]
-        rbOption2.text = options[1]
-        rbOption3.text = options[2]
-        rbOption4.text = options[3]
+        progress.text = String.format("%d / %d",currentQuestionIdx+1, currentQuestions.size)
+        txtQuestion.text = currentQuestion.getQuestion()
+        rbOption1.text = currentOption[0]
+        rbOption2.text = currentOption[1]
+        rbOption3.text = currentOption[2]
+        rbOption4.text = currentOption[3]
 
         rgOptions.setOnCheckedChangeListener{ _,_ ->
             btnSubmit.isEnabled = true
             var selectedID = rgOptions.checkedRadioButtonId
             when(selectedID){
-                R.id.rbOption1_Quiz -> QuizSingleton.currentSelectedAnswer = 0
-                R.id.rbOption2_Quiz -> QuizSingleton.currentSelectedAnswer = 1
-                R.id.rbOption3_Quiz -> QuizSingleton.currentSelectedAnswer = 2
-                R.id.rbOption4_Quiz -> QuizSingleton.currentSelectedAnswer = 3
+                R.id.rbOption1_Quiz -> quizApp.currentSelectedAnswer = 0
+                R.id.rbOption2_Quiz -> quizApp.currentSelectedAnswer = 1
+                R.id.rbOption3_Quiz -> quizApp.currentSelectedAnswer = 2
+                R.id.rbOption4_Quiz -> quizApp.currentSelectedAnswer = 3
             }
         }
 
