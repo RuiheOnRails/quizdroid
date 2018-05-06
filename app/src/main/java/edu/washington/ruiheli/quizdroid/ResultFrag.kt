@@ -20,7 +20,7 @@ class ResultFrag : Fragment() {
         val questions = currentTopic.getQuizzes()
         val question = questions[quizApp.currentQuestionIndex]
         val userAnswer = quizApp.currentSelectedAnswer
-        val correctAnswer = question.getCorrectIndex()
+        val correctAnswer = question.getCorrectIndex() - 1 //due to 1 based index used in json
 
         val txtUserAnswer = view.findViewById<TextView>(R.id.txtUserAnswer_Result)
         val txtCorrectAnswer = view.findViewById<TextView>(R.id.txtCorrectAnswer_Result)

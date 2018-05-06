@@ -3,14 +3,14 @@ package edu.washington.ruiheli.quizdroid
 class Topic(title: String, shortDesc: String, longDesc: String, quizzes: Array<Quiz>){
     private val title: String
     private val shortDesc: String
-    private val longDesc: String
-    private val quizzes: Array<Quiz>
+    private val desc: String
+    private val questions: Array<Quiz>
 
     init{
         this.title = title
         this.shortDesc = shortDesc
-        this.longDesc = longDesc
-        this.quizzes = quizzes
+        this.desc = longDesc
+        this.questions = quizzes
     }
 
     fun getTitle():String {
@@ -18,14 +18,14 @@ class Topic(title: String, shortDesc: String, longDesc: String, quizzes: Array<Q
     }
 
     fun getShortDesc(): String{
-        return this.shortDesc
+        return this.desc
     }
 
     fun getLongDesc(): String{
-        return this.longDesc
+        return this.desc
     }
 
     fun getQuizzes(): Array<Quiz>{
-        return this.quizzes
+        return this.questions
     }
 }

@@ -1,14 +1,17 @@
 package edu.washington.ruiheli.quizdroid
 
-import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
-import android.widget.Toast
+import com.google.gson.GsonBuilder
+import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.*
+import java.io.IOException
 
 
 class MainActivity : AppCompatActivity() {
@@ -24,8 +27,34 @@ class MainActivity : AppCompatActivity() {
         quizApp.currentTopicIndex = 0
         quizApp.currentQuestionIndex = 0
         quizApp.currentSelectedAnswer = 0
-        listView.adapter = CustomeAdapter(this, quizApp.getTopicRepo().getTopics())
+        listView.adapter = CustomeAdapter(quizApp.getTopicRepo().getTopics())
+        setTopicFromJsonURL(quizApp.getJsonURL())
 
+    }
+
+    fun setTopicFromJsonURL(jsonUrl: String){
+        var url = jsonUrl
+        if (jsonUrl.isEmpty()){
+            url = "http://tednewardsandbox.site44.com/questions.json"
+        }
+        val request = Request.Builder().url(url).build()
+        val client = OkHttpClient()
+        client.newCall(request).enqueue(object: Callback {
+            override fun onFailure(call: Call?, e: IOException?) {
+                Log.e("MainActivity", "failed to fetch json")
+            }
+
+            override fun onResponse(call: Call?, response: Response?) {
+                val body = response?.body()?.string()
+                val gson = GsonBuilder().create()
+                val arrTopic = gson.fromJson(body, Array<Topic>::class.java)
+                quizApp.setTopicRepo(arrTopic)
+
+                runOnUiThread {
+                    main_ListView.adapter = CustomeAdapter(arrTopic)
+                }
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -36,8 +65,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.prefMenuItem -> {
-            val newToast = Toast.makeText(this, "clicked on preference", Toast.LENGTH_LONG)
-            newToast.show()
+            val i = Intent(this@MainActivity, PreferenceActivity::class.java)
+            startActivity(i)
+            true
+        }
+        R.id.prefRefresh -> {
+            this@MainActivity.finish()
+            this@MainActivity.startActivity(this@MainActivity.intent)
             true
         }
         else -> {
@@ -45,12 +79,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private class CustomeAdapter(context: Context, topics: Array<Topic>): BaseAdapter() {
-        private val myContext: Context = context
-        private val myTopics: Array<Topic> = topics
+    private class CustomeAdapter( topics: Array<Topic>): BaseAdapter() {
+        private val myTopics = topics
         private val quizApp = QuizApp.instance
         override fun getCount(): Int {
-            return myTopics.size
+            return this.myTopics.size
         }
 
         override fun getItemId(position: Int): Long {
@@ -61,16 +94,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val layoutInflater = LayoutInflater.from(myContext)
+            val layoutInflater = LayoutInflater.from(parent?.context)
             val row = layoutInflater.inflate(R.layout.row_main, parent, false)
             val rowText = row.findViewById<TextView>(R.id.row_topic)
             val rowShortDescription = row.findViewById<TextView>(R.id.shortDesc_row)
             rowText.text = myTopics[position].getTitle()
             rowShortDescription.text = myTopics[position].getShortDesc()
             row.setOnClickListener({
-                val i = Intent(myContext, FragHolderActivity::class.java)
+                val i = Intent(parent?.context, FragHolderActivity::class.java)
                 quizApp.currentTopicIndex = position
-                myContext.startActivity(i)
+                parent?.context?.startActivity(i)
             })
             return row
         }

@@ -2,25 +2,25 @@ package edu.washington.ruiheli.quizdroid
 
 class Quiz(question: String, options: Array<String>, correctIndex: Int){
 
-    private val question: String
-    private val options : Array<String>
-    private val correctIndex : Int
+    private val text: String
+    private val answers : Array<String>
+    private val answer : Int
 
     init {
-        this.question = question
-        this.options = options
-        this.correctIndex = correctIndex
+        this.text = question
+        this.answers = options
+        this.answer = correctIndex
     }
 
     fun getQuestion():String{
-        return this.question
+        return this.text
     }
 
     fun getOptions(): Array<String> {
-        return this.options
+        return this.answers
     }
 
     fun getCorrectIndex(): Int {
-        return this.correctIndex
+        return this.answer
     }
 }

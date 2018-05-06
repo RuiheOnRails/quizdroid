@@ -7,4 +7,10 @@
         android:enabled="true"
         android:title="Preference"
         app:showAsAction="ifRoom|withText" />
+
+    <item
+        android:id="@+id/prefRefresh"
+        android:enabled="true"
+        android:title="Refresh"
+        app:showAsAction="ifRoom|withText" />
 </menu>
