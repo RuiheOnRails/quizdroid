@@ -5,12 +5,13 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
-
+import android.widget.Toast
 
 
 class MainActivity : AppCompatActivity() {
@@ -20,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         quizApp = QuizApp.instance
+        setSupportActionBar(findViewById(R.id.my_toolbar))
         setContentView(R.layout.activity_main)
         var listView = findViewById<ListView>(R.id.main_ListView)
         quizApp.rightAnswerCount = 0
@@ -27,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         quizApp.currentQuestionIndex = 0
         quizApp.currentSelectedAnswer = 0
         listView.adapter = CustomeAdapter(this, quizApp.getTopicRepo().getTopics())
+
     }
 
     private class CustomeAdapter(context: Context, topics: Array<Topic>): BaseAdapter() {
@@ -57,6 +60,20 @@ class MainActivity : AppCompatActivity() {
                 myContext.startActivity(i)
             })
             return row
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.prefMenuItem -> {
+            val newToast = Toast.makeText(this.applicationContext, "clicked on preference", Toast.LENGTH_LONG)
+            newToast.show()
+            true
+        }
+
+        else -> {
+            // If we got here, the user's action was not recognized.
+            // Invoke the superclass to handle it.
+            super.onOptionsItemSelected(item)
         }
     }
 
