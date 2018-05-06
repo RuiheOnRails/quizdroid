@@ -4,10 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
@@ -21,7 +18,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         quizApp = QuizApp.instance
-        setSupportActionBar(findViewById(R.id.my_toolbar))
         setContentView(R.layout.activity_main)
         var listView = findViewById<ListView>(R.id.main_ListView)
         quizApp.rightAnswerCount = 0
@@ -30,6 +26,23 @@ class MainActivity : AppCompatActivity() {
         quizApp.currentSelectedAnswer = 0
         listView.adapter = CustomeAdapter(this, quizApp.getTopicRepo().getTopics())
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.settings, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.prefMenuItem -> {
+            val newToast = Toast.makeText(this, "clicked on preference", Toast.LENGTH_LONG)
+            newToast.show()
+            true
+        }
+        else -> {
+            super.onOptionsItemSelected(item)
+        }
     }
 
     private class CustomeAdapter(context: Context, topics: Array<Topic>): BaseAdapter() {
@@ -63,19 +76,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.prefMenuItem -> {
-            val newToast = Toast.makeText(this.applicationContext, "clicked on preference", Toast.LENGTH_LONG)
-            newToast.show()
-            true
-        }
 
-        else -> {
-            // If we got here, the user's action was not recognized.
-            // Invoke the superclass to handle it.
-            super.onOptionsItemSelected(item)
-        }
-    }
 
     override fun onBackPressed() {
         //exit to home
