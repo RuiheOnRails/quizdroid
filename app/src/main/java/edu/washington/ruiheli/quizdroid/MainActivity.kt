@@ -1,13 +1,16 @@
 package edu.washington.ruiheli.quizdroid
 
+import android.content.Context
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import android.net.ConnectivityManager
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.*
 import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
+import android.widget.Toast
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
@@ -28,8 +31,12 @@ class MainActivity : AppCompatActivity() {
         quizApp.currentQuestionIndex = 0
         quizApp.currentSelectedAnswer = 0
         listView.adapter = CustomeAdapter(quizApp.getTopicRepo().getTopics())
-        setTopicFromJsonURL(quizApp.getJsonURL())
-
+        if (isNetworkAvailable()){
+            setTopicFromJsonURL(quizApp.getJsonURL())
+        }else{
+            val toast = Toast.makeText(this, "No internet, loading default questions",Toast.LENGTH_SHORT)
+            toast.show()
+        }
     }
 
     fun setTopicFromJsonURL(jsonUrl: String){
@@ -117,6 +124,12 @@ class MainActivity : AppCompatActivity() {
         i.addCategory(Intent.CATEGORY_HOME)
         i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(i)
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 }
 
